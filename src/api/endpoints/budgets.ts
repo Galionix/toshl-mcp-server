@@ -19,36 +19,70 @@ export class BudgetsClient {
 
     /**
      * Gets a list of all budgets
+     * @param from Start date in YYYY-MM-DD format (optional)
+     * @param to End date in YYYY-MM-DD format (optional)
      * @returns List of budgets
      */
-    async listBudgets(): Promise<ToshlBudget[]> {
-        logger.debug('Fetching budgets list');
+    async listBudgets(from?: string, to: string = this.getDefaultToDate()): Promise<ToshlBudget[]> {
+        logger.debug('Fetching budgets list', { from, to });
 
-        const response = await this.client.get<ToshlBudget[]>('/budgets');
+        const params: Record<string, string> = { to };
+        if (from) {
+            params.from = from;
+        }
+
+        const response = await this.client.get<ToshlBudget[]>('/budgets', params);
         return response.data;
+    }
+
+    /**
+     * Gets default to date (last day of current month)
+     * @returns Date string in YYYY-MM-DD format
+     */
+    private getDefaultToDate(): string {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        // Get the last day of the current month
+        const lastDay = new Date(year, month, 0).getDate();
+        return `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
     }
 
     /**
      * Gets a specific budget by ID
      * @param id Budget ID
+     * @param from Start date in YYYY-MM-DD format (optional)
+     * @param to End date in YYYY-MM-DD format (optional)
      * @returns Budget details
      */
-    async getBudget(id: string): Promise<ToshlBudget> {
-        logger.debug('Fetching budget details', { id });
+    async getBudget(id: string, from?: string, to: string = this.getDefaultToDate()): Promise<ToshlBudget> {
+        logger.debug('Fetching budget details', { id, from, to });
 
-        const response = await this.client.get<ToshlBudget>(`/budgets/${id}`);
+        const params: Record<string, string> = { to };
+        if (from) {
+            params.from = from;
+        }
+
+        const response = await this.client.get<ToshlBudget>(`/budgets/${id}`, params);
         return response.data;
     }
 
     /**
      * Gets the history of a specific budget
      * @param id Budget ID
+     * @param from Start date in YYYY-MM-DD format (optional)
+     * @param to End date in YYYY-MM-DD format (optional)
      * @returns Budget history
      */
-    async getBudgetHistory(id: string): Promise<any[]> {
-        logger.debug('Fetching budget history', { id });
+    async getBudgetHistory(id: string, from?: string, to: string = this.getDefaultToDate()): Promise<any[]> {
+        logger.debug('Fetching budget history', { id, from, to });
 
-        const response = await this.client.get<any[]>(`/budgets/${id}/history`);
+        const params: Record<string, string> = { to };
+        if (from) {
+            params.from = from;
+        }
+
+        const response = await this.client.get<any[]>(`/budgets/${id}/history`, params);
         return response.data;
     }
 }

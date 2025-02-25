@@ -19,24 +19,60 @@ export class PlanningClient {
 
     /**
      * Gets planning information
+     * @param from Start date in YYYY-MM-DD format
+     * @param to End date in YYYY-MM-DD format
      * @returns Planning information
      */
-    async getPlanning(): Promise<ToshlPlanning> {
-        logger.debug('Fetching planning information');
+    async getPlanning(from: string = this.getDefaultFromDate(), to: string = this.getDefaultToDate()): Promise<ToshlPlanning> {
+        logger.debug('Fetching planning information', { from, to });
 
-        const response = await this.client.get<ToshlPlanning>('/planning');
+        const params: Record<string, string> = {
+            from,
+            to
+        };
+
+        const response = await this.client.get<ToshlPlanning>('/planning', params);
         return response.data;
+    }
+
+    /**
+     * Gets default to date (last day of current month)
+     * @returns Date string in YYYY-MM-DD format
+     */
+    private getDefaultToDate(): string {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        // Get the last day of the current month
+        const lastDay = new Date(year, month, 0).getDate();
+        return `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+    }
+
+    /**
+     * Gets default from date (first day of current month)
+     * @returns Date string in YYYY-MM-DD format
+     */
+    private getDefaultFromDate(): string {
+        const date = new Date();
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
     }
 
     /**
      * Gets specific planning information by ID
      * @param id Planning ID
+     * @param from Start date in YYYY-MM-DD format
+     * @param to End date in YYYY-MM-DD format
      * @returns Planning details
      */
-    async getPlanningById(id: string): Promise<ToshlPlanning> {
-        logger.debug('Fetching planning details', { id });
+    async getPlanningById(id: string, from: string = this.getDefaultFromDate(), to: string = this.getDefaultToDate()): Promise<ToshlPlanning> {
+        logger.debug('Fetching planning details', { id, from, to });
 
-        const response = await this.client.get<ToshlPlanning>(`/planning/${id}`);
+        const params: Record<string, string> = {
+            from,
+            to
+        };
+
+        const response = await this.client.get<ToshlPlanning>(`/planning/${id}`, params);
         return response.data;
     }
 }

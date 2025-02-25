@@ -30,13 +30,42 @@ export class MeClient {
 
     /**
      * Gets the user's account summary
+     * @param from Start date in YYYY-MM-DD format
+     * @param to End date in YYYY-MM-DD format
      * @returns Account summary
      */
-    async getSummary(): Promise<any> {
-        logger.debug('Fetching account summary');
+    async getSummary(from: string = this.getDefaultFromDate(), to: string = this.getDefaultToDate()): Promise<any> {
+        logger.debug('Fetching account summary', { from, to });
 
-        const response = await this.client.get<any>('/me/summary');
+        const params: Record<string, string> = {
+            from,
+            to
+        };
+
+        const response = await this.client.get<any>('/me/summary', params);
         return response.data;
+    }
+
+    /**
+     * Gets default to date (last day of current month)
+     * @returns Date string in YYYY-MM-DD format
+     */
+    private getDefaultToDate(): string {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        // Get the last day of the current month
+        const lastDay = new Date(year, month, 0).getDate();
+        return `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+    }
+
+    /**
+     * Gets default from date (first day of current month)
+     * @returns Date string in YYYY-MM-DD format
+     */
+    private getDefaultFromDate(): string {
+        const date = new Date();
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
     }
 
     /**
