@@ -199,7 +199,7 @@ export class ToshlMcpServer {
             }
 
             throw new McpError(
-                ErrorCode.NotFound,
+                ErrorCode.MethodNotFound,
                 `Resource not found: ${uri}`
             );
         });

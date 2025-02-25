@@ -67,7 +67,7 @@ export async function setupBudgetResources(server: Server, uri: string) {
 
         // If we get here, the URI is not supported
         throw new McpError(
-            ErrorCode.NotFound,
+            ErrorCode.MethodNotFound,
             `Resource not found: ${uri}`
         );
     } catch (error) {
