@@ -1,0 +1,66 @@
+# Toshl MCP Server Project Rules
+
+## Project Structure
+- The project follows a modular structure with clear separation of concerns
+- Each module is responsible for a specific part of the functionality
+- The project uses ES modules with .js extensions in import statements
+
+## Code Style
+- TypeScript is used for type safety
+- 4-space indentation is used throughout the project
+- Single quotes are preferred for strings
+- Semicolons are required at the end of statements
+- Arrow functions are preferred over function declarations
+- Async/await is preferred over promises
+
+## Naming Conventions
+- CamelCase for variables and functions
+- PascalCase for classes and interfaces
+- UPPER_CASE for constants
+- Use descriptive names that clearly indicate the purpose
+
+## File Organization
+- One class/component per file
+- Related functionality is grouped in directories
+- Index files are used to re-export functionality
+
+## Error Handling
+- All errors are properly caught and handled
+- Errors are mapped to appropriate MCP error codes
+- Error messages are descriptive and helpful
+
+## Logging
+- Winston is used for logging
+- Different log levels are used appropriately
+- Sensitive information is not logged
+
+## Authentication
+- Basic authentication is used for simplicity
+- Authentication details are stored in environment variables
+- Authentication headers are added to all API requests
+
+## Caching
+- In-memory caching is used for performance
+- ETags are used for cache validation
+- Cache TTL is configurable
+
+## MCP Server
+- The server exposes both resources and tools
+- Resources are used for direct data access
+- Tools are used for parameterized operations
+- All resources and tools are properly documented
+
+## API Client
+- The API client is responsible for communication with the Toshl API
+- It handles authentication, request/response, and error handling
+- It supports caching for improved performance
+
+## Testing
+- Unit tests are written for all functionality
+- Integration tests verify the complete flow
+- Tests use mock data to avoid API calls
+
+## Documentation
+- Code is well-documented with JSDoc comments
+- README.md provides comprehensive project documentation
+- Examples are provided for common use cases
