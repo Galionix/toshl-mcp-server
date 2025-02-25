@@ -19,22 +19,22 @@ export function mapApiErrorToMcpError(error: ApiError): McpError {
             );
         case 401:
             return new McpError(
-                ErrorCode.Unauthorized,
+                ErrorCode.InvalidRequest,
                 'Authentication failed. Please check your API token.'
             );
         case 403:
             return new McpError(
-                ErrorCode.Forbidden,
+                ErrorCode.InvalidRequest,
                 `Access denied: ${error.message}`
             );
         case 404:
             return new McpError(
-                ErrorCode.NotFound,
+                ErrorCode.MethodNotFound,
                 `Resource not found: ${error.message}`
             );
         case 429:
             return new McpError(
-                ErrorCode.RateLimited,
+                ErrorCode.InvalidRequest,
                 'Rate limit exceeded. Please try again later.'
             );
         case 500:

@@ -44,12 +44,8 @@ export class AuthProvider {
                     return {
                         'Authorization': `Basic ${Buffer.from(`${this.config.token}:`).toString('base64')}`
                     };
-                } else if (this.config.username && this.config.password) {
-                    return {
-                        'Authorization': `Basic ${Buffer.from(`${this.config.username}:${this.config.password}`).toString('base64')}`
-                    };
                 }
-                throw new Error('Missing token or username/password for basic authentication');
+                throw new Error('Missing token for basic authentication');
 
             case AuthType.OAUTH:
                 if (!this.config.token) {
@@ -71,7 +67,7 @@ export class AuthProvider {
     isConfigured(): boolean {
         switch (this.config.type) {
             case AuthType.BASIC:
-                return !!(this.config.token || (this.config.username && this.config.password));
+                return !!this.config.token;
             case AuthType.OAUTH:
                 return !!this.config.token;
             default:
