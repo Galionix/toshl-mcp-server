@@ -76,7 +76,7 @@ export function handleApiError(error: any): never {
     // If it's a network error
     if (error.request) {
         throw new McpError(
-            ErrorCode.NetworkError,
+            ErrorCode.ConnectionClosed,
             `Network error: ${error.message}`
         );
     }

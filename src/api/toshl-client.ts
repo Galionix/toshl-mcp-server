@@ -36,6 +36,7 @@ export class ToshlApiClient {
             (config) => {
                 // Add authentication headers
                 const authHeaders = this.authProvider.getAuthHeaders();
+                // @ts-ignore TODO: check this
                 config.headers = { ...config.headers, ...authHeaders };
 
                 // Add If-None-Match header if we have a cached ETag

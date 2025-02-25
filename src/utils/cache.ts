@@ -51,7 +51,12 @@ export class Cache {
             return false;
         }
 
-        const result = this.cache.set(key, value, ttl);
+        let result: boolean;
+        if (ttl) {
+            result = this.cache.set(key, value, ttl);
+        } else {
+            result = this.cache.set(key, value);
+        }
         logger.debug('Cache set', { key, ttl });
         return result;
     }
