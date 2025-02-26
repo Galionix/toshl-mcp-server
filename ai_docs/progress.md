@@ -19,10 +19,12 @@ We have completed the initial implementation of the Toshl MCP Server project. Th
 - [x] Caching system implementation
 - [x] Error handling implementation
 - [x] Documentation
+- [x] Entries endpoint implementation
 
 ### In Progress
 
-- [ ] Testing with real API credentials
+- [x] Testing for entries endpoint (completed and fixed)
+- [ ] Testing with real API credentials for other endpoints
 - [ ] Performance optimization
 - [ ] Documentation enhancement
 
@@ -39,10 +41,13 @@ The following components have been implemented and are ready for testing:
 1. **Project Structure**: The project has been set up with TypeScript, ESM modules, and necessary dependencies.
 2. **MCP Server**: The server has been implemented with support for resources and tools.
 3. **API Clients**: Clients for all required Toshl endpoints have been created.
-4. **Resource Handlers**: Handlers for accounts, categories, tags, budgets, and user information have been implemented.
+4. **Resource Handlers**: Handlers for accounts, categories, tags, budgets, user information, and entries have been implemented.
 5. **Tool Handlers**: Handlers for data retrieval and analysis have been implemented.
 6. **Support Systems**: Caching and error handling mechanisms have been added.
 7. **Documentation**: Comprehensive documentation has been created.
+8. **Tests**: Tests for the entries endpoint have been implemented and fixed, covering listEntries, getEntry, getEntrySums, and getEntryTimeline functionality.
+   - Fixed parameter handling in the EntriesClient class to correctly pass parameters to the API
+   - Added required currency parameter for the getEntrySums endpoint
 
 ## What's Left to Build
 
@@ -50,15 +55,18 @@ The following components have been implemented and are ready for testing:
 
 1. **Unit Tests**
 
-   - [ ] Write tests for API clients
+   - [x] Write tests for entries API client
+   - [x] Fix parameter handling in API clients
+   - [ ] Write tests for other API clients
    - [ ] Write tests for resource handlers
    - [ ] Write tests for tool handlers
 
 2. **Integration Tests**
 
-   - [ ] Test end-to-end flows
+   - [x] Test entries endpoint with real API credentials
+   - [ ] Test other end-to-end flows
    - [ ] Test with mock data
-   - [ ] Test with real API credentials
+   - [ ] Test remaining endpoints with real API credentials
 
 3. **Performance Tests**
    - [ ] Test caching effectiveness

@@ -77,6 +77,89 @@ export interface ToshlPlanning {
     [key: string]: any; // For additional properties
 }
 
+export interface ToshlLocation {
+    id?: string;
+    venue_id?: string;
+    latitude?: number;
+    longitude?: number;
+    [key: string]: any; // For additional properties
+}
+
+export interface ToshlRepeat {
+    id: string;
+    frequency: string;
+    interval: number;
+    start: string;
+    end?: string;
+    count?: number;
+    iteration?: number;
+    template?: boolean;
+    [key: string]: any; // For additional properties
+}
+
+export interface ToshlTransaction {
+    id: string;
+    account: string;
+    currency: ToshlCurrency;
+    [key: string]: any; // For additional properties
+}
+
+export interface ToshlImage {
+    id: string;
+    path: string;
+    status: string;
+    [key: string]: any; // For additional properties
+}
+
+export interface ToshlReminder {
+    period: string;
+    number: number;
+    at: string;
+    [key: string]: any; // For additional properties
+}
+
+export interface ToshlEntry {
+    id: string;
+    amount: number;
+    currency: ToshlCurrency;
+    date: string;
+    desc: string;
+    account: string;
+    category: string;
+    tags?: string[];
+    location?: ToshlLocation;
+    modified: string;
+    repeat?: ToshlRepeat;
+    transaction?: ToshlTransaction;
+    images?: ToshlImage[];
+    reminders?: ToshlReminder[];
+    completed?: boolean;
+    [key: string]: any; // For additional properties
+}
+
+export interface ToshlEntrySum {
+    day: string;
+    expenses?: {
+        sum: number;
+        count: number;
+    };
+    incomes?: {
+        sum: number;
+        count: number;
+    };
+    modified: string;
+    [key: string]: any; // For additional properties
+}
+
+export interface ToshlTimelineItem {
+    day: string;
+    sum: number;
+    count: number;
+    currency: string;
+    entries: ToshlEntry[];
+    [key: string]: any; // For additional properties
+}
+
 // API Client Types
 
 export interface ApiClientConfig {

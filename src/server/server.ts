@@ -15,12 +15,14 @@ import { setupCategoryResources } from '../resources/category-resources.js';
 import { setupTagResources } from '../resources/tag-resources.js';
 import { setupBudgetResources } from '../resources/budget-resources.js';
 import { setupUserResources } from '../resources/user-resources.js';
+import { setupEntryResources } from '../resources/entry-resources.js';
 import { setupAccountTools } from '../tools/account-tools.js';
 import { setupCategoryTools } from '../tools/category-tools.js';
 import { setupTagTools } from '../tools/tag-tools.js';
 import { setupBudgetTools } from '../tools/budget-tools.js';
 import { setupUserTools } from '../tools/user-tools.js';
 import { setupAnalysisTools } from '../tools/analysis-tools.js';
+import { setupEntryTools } from '../tools/entry-tools.js';
 
 /**
  * Main MCP server for Toshl Finance API
@@ -121,6 +123,25 @@ export class ToshlMcpServer {
                         mimeType: 'application/json',
                         description: 'Summary of Toshl Finance accounts',
                     },
+                    // Entry resources
+                    {
+                        uri: 'toshl://entries/list',
+                        name: 'List of Toshl entries',
+                        mimeType: 'application/json',
+                        description: 'List of entries in Toshl Finance',
+                    },
+                    {
+                        uri: 'toshl://entries/sums',
+                        name: 'Daily sums of Toshl entries',
+                        mimeType: 'application/json',
+                        description: 'Daily sums of entries in Toshl Finance',
+                    },
+                    {
+                        uri: 'toshl://entries/timeline',
+                        name: 'Timeline of Toshl entries',
+                        mimeType: 'application/json',
+                        description: 'Timeline of entries in Toshl Finance',
+                    },
                 ],
             };
         });
@@ -164,6 +185,13 @@ export class ToshlMcpServer {
                         mimeType: 'application/json',
                         description: 'History of a specific budget in Toshl Finance',
                     },
+                    // Entry resource templates
+                    {
+                        uriTemplate: 'toshl://entries/{id}',
+                        name: 'Toshl entry details',
+                        mimeType: 'application/json',
+                        description: 'Details of a specific entry in Toshl Finance',
+                    },
                 ],
             };
         });
@@ -198,6 +226,11 @@ export class ToshlMcpServer {
                 return setupUserResources(this.server, uri);
             }
 
+            // Entry resources
+            if (uri.startsWith('toshl://entries')) {
+                return setupEntryResources(this.server, uri);
+            }
+
             throw new McpError(
                 ErrorCode.MethodNotFound,
                 `Resource not found: ${uri}`
@@ -219,6 +252,7 @@ export class ToshlMcpServer {
             const budgetTools = setupBudgetTools();
             const userTools = setupUserTools();
             const analysisTools = setupAnalysisTools();
+            const entryTools = setupEntryTools();
 
             return {
                 tools: [
@@ -228,6 +262,7 @@ export class ToshlMcpServer {
                     ...budgetTools,
                     ...userTools,
                     ...analysisTools,
+                    ...entryTools,
                 ],
             };
         });
@@ -267,6 +302,11 @@ export class ToshlMcpServer {
             // Analysis tools
             if (toolName.startsWith('analyze_')) {
                 return this.handleAnalysisTool(toolName, args);
+            }
+
+            // Entry tools
+            if (toolName.startsWith('entry_')) {
+                return this.handleEntryTool(toolName, args);
             }
 
             throw new McpError(
@@ -346,6 +386,18 @@ export class ToshlMcpServer {
         // Import dynamically to avoid circular dependencies
         const { handleAnalysisTool } = await import('../tools/analysis-tools.js');
         return handleAnalysisTool(toolName, args);
+    }
+
+    /**
+     * Handles entry tools
+     * @param toolName Tool name
+     * @param args Tool arguments
+     * @returns Tool response
+     */
+    private async handleEntryTool(toolName: string, args: any) {
+        // Import dynamically to avoid circular dependencies
+        const { handleEntryTool } = await import('../tools/entry-tools.js');
+        return handleEntryTool(toolName, args);
     }
 
     /**

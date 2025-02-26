@@ -2,7 +2,7 @@
 
 ## Current Work Focus
 
-We have completed the initial implementation of the Toshl MCP Server. The focus is now on testing, refinement, and ensuring all components work together correctly.
+We have completed the initial implementation of the Toshl MCP Server. The focus is now on testing, refinement, and ensuring all components work together correctly. We have successfully implemented and fixed tests for the /entries endpoint, ensuring it works correctly with the Toshl API.
 
 ## Recent Changes
 
@@ -11,10 +11,14 @@ We have made significant progress on the project:
 1. Set up the project structure with TypeScript, ESM modules, and necessary dependencies
 2. Implemented the MCP server with support for resources and tools
 3. Created API clients for all required Toshl endpoints
-4. Implemented resource handlers for accounts, categories, tags, budgets, and user information
+4. Implemented resource handlers for accounts, categories, tags, budgets, user information, and entries
 5. Implemented tool handlers for data retrieval and analysis
 6. Added caching and error handling mechanisms
 7. Created comprehensive documentation
+8. Added support for the /entries endpoint, including list entries, get entry details, daily sums, and timeline views
+9. Created and fixed tests for the /entries endpoint to verify its functionality with the Toshl API
+   - Fixed parameter handling in the EntriesClient class
+   - Added required currency parameter for the getEntrySums endpoint
 
 ## Next Steps
 
@@ -77,7 +81,7 @@ The current implementation provides meaningful error messages and appropriate er
 
 We have implemented a balanced approach:
 
-1. **Resources**: Direct data access for accounts, categories, tags, budgets, and user information
+1. **Resources**: Direct data access for accounts, categories, tags, budgets, user information, and entries
 2. **Tools**: Parameterized operations for data retrieval and analysis
 
 This approach provides flexibility for AI agents to access and analyze financial data.
