@@ -251,7 +251,6 @@ export class ToshlMcpServer {
             const tagTools = setupTagTools();
             const budgetTools = setupBudgetTools();
             const userTools = setupUserTools();
-            const analysisTools = setupAnalysisTools();
             const entryTools = setupEntryTools();
 
             return {
@@ -261,7 +260,6 @@ export class ToshlMcpServer {
                     ...tagTools,
                     ...budgetTools,
                     ...userTools,
-                    ...analysisTools,
                     ...entryTools,
                 ],
             };
