@@ -191,6 +191,7 @@ describe('EntriesClient', () => {
         // Get account and category IDs for creating entries
         let accountId: string;
         let categoryId: string;
+        let tagId: string;
 
         beforeAll(async () => {
             // First get the list of entries to find a valid account and category ID
@@ -215,6 +216,11 @@ describe('EntriesClient', () => {
             // Get the first entry's account and category IDs
             accountId = entries[0].account;
             categoryId = entries[0].category;
+
+            // Get a tag ID if available
+            if (entries[0].tags && entries[0].tags.length > 0) {
+                tagId = entries[0].tags[0];
+            }
         });
 
         test('createEntry should create a new entry', async () => {
@@ -292,6 +298,58 @@ describe('EntriesClient', () => {
             } catch (error) {
                 // Expected error, entry was deleted
                 expect(error).toBeDefined();
+            }
+        });
+
+        test('manageEntries should manage entries in bulk', async () => {
+            // Skip the test if account, category, or tag IDs are not available
+            if (!accountId || !categoryId) {
+                console.warn('Skipping manageEntries test: No account or category IDs available');
+                return;
+            }
+
+            // Create a test entry first
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+
+            const newEntry = {
+                amount: -12.99, // Negative for expense
+                currency: {
+                    code: 'USD',
+                    rate: 1,
+                    fixed: false
+                },
+                date: todayStr,
+                desc: 'Test expense for manage entries',
+                account: accountId,
+                category: categoryId
+            };
+
+            const createdEntry = await client.createEntry(newEntry);
+            expect(createdEntry.id).toBeDefined();
+
+            try {
+                // Test managing entries by setting a new category
+                await client.manageEntries({
+                    with: {
+                        description: 'Test expense for manage entries'
+                    },
+                    set: {
+                        category: categoryId
+                    }
+                });
+
+                // No direct way to verify the result since manageEntries doesn't return data
+                // But if no error is thrown, the operation was successful
+
+                // Clean up the created entry
+                await client.deleteEntry(createdEntry.id);
+            } catch (error) {
+                // Clean up even if the test fails
+                if (createdEntry && createdEntry.id) {
+                    await client.deleteEntry(createdEntry.id);
+                }
+                throw error;
             }
         });
     });

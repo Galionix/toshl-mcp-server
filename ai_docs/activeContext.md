@@ -27,6 +27,10 @@ We have made significant progress on the project:
     - Modified updateEntry to fetch the existing entry first
     - Merged the changes with the existing entry data
     - Ensured all required fields are present before sending the update to the API
+12. Implemented entries/manage endpoint for bulk entry management
+    - Added manageEntries method to the EntriesClient class
+    - Created entry_manage tool for the MCP server
+    - Added validation for required parameters
 
 ## Next Steps
 

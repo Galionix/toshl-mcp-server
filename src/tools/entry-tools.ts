@@ -47,6 +47,94 @@ export function setupEntryTools() {
             },
         },
         {
+            name: 'entry_manage',
+            description: 'Manage entries in bulk in Toshl Finance',
+            inputSchema: {
+                type: 'object',
+                properties: {
+                    with: {
+                        type: 'object',
+                        description: 'Criteria to select entries to manage',
+                        properties: {
+                            tags: {
+                                type: 'array',
+                                description: 'Array of tag IDs to select entries with',
+                                items: {
+                                    type: 'string',
+                                }
+                            },
+                            accounts: {
+                                type: 'array',
+                                description: 'Array of account IDs to select entries with',
+                                items: {
+                                    type: 'string',
+                                }
+                            },
+                            categories: {
+                                type: 'array',
+                                description: 'Array of category IDs to select entries with',
+                                items: {
+                                    type: 'string',
+                                }
+                            },
+                            description: {
+                                type: 'string',
+                                description: 'Description text to select entries with',
+                            }
+                        },
+                    },
+                    set: {
+                        type: 'object',
+                        description: 'Properties to set on selected entries',
+                        properties: {
+                            tags: {
+                                type: 'array',
+                                description: 'Array of tag IDs to set on entries',
+                                items: {
+                                    type: 'string',
+                                }
+                            },
+                            account: {
+                                type: 'string',
+                                description: 'Account ID to set on entries',
+                            },
+                            category: {
+                                type: 'string',
+                                description: 'Category ID to set on entries',
+                            }
+                        },
+                    },
+                    add: {
+                        type: 'object',
+                        description: 'Properties to add to selected entries',
+                        properties: {
+                            tags: {
+                                type: 'array',
+                                description: 'Array of tag IDs to add to entries',
+                                items: {
+                                    type: 'string',
+                                }
+                            }
+                        },
+                    },
+                    remove: {
+                        type: 'object',
+                        description: 'Properties to remove from selected entries',
+                        properties: {
+                            tags: {
+                                type: 'array',
+                                description: 'Array of tag IDs to remove from entries',
+                                items: {
+                                    type: 'string',
+                                }
+                            }
+                        },
+                    }
+                },
+                required: ['with'],
+            },
+        },
+        {
             name: 'entry_get',
             description: 'Get details of a specific entry in Toshl Finance',
             inputSchema: {
@@ -628,6 +716,82 @@ export async function handleEntryDeleteTool(args: any) {
 }
 
 /**
+ * Handles the entry_manage tool
+ * @param args Tool arguments
+ * @returns Tool response
+ */
+export async function handleEntryManageTool(args: any) {
+    logger.debug('Handling entry_manage tool', { args });
+
+    // Check required parameters
+    if (!args.with) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'Missing required parameter: with',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    // Check that at least one with parameter is provided
+    if (!args.with.tags && !args.with.accounts && !args.with.categories && !args.with.description) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'At least one with parameter is required (tags, accounts, categories, or description)',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    // Check that at least one action parameter is provided
+    if (!args.set && !args.add && !args.remove) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'At least one action parameter is required (set, add, or remove)',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    try {
+        const entriesClient = await createEntriesClient();
+
+        // Manage the entries
+        await entriesClient.manageEntries(args);
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'Entries managed successfully',
+                },
+            ],
+        };
+    } catch (error) {
+        logger.error('Error handling entry_manage tool', { args, error });
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: `Error managing entries: ${(error as Error).message}`,
+                },
+            ],
+            isError: true,
+        };
+    }
+}
+
+/**
  * Handles entry tools
  * @param toolName Tool name
  * @param args Tool arguments
@@ -649,6 +813,8 @@ export async function handleEntryTool(toolName: string, args: any) {
             return handleEntryUpdateTool(args);
         case 'entry_delete':
             return handleEntryDeleteTool(args);
+        case 'entry_manage':
+            return handleEntryManageTool(args);
         default:
             throw new McpError(
                 ErrorCode.MethodNotFound,

@@ -75,12 +75,27 @@ export class EntriesClient {
     async updateEntry(id: string, entry: Partial<ToshlEntry>, updateMode?: 'all' | 'one' | 'tail'): Promise<ToshlEntry> {
         logger.debug('Updating entry', { id, entry, updateMode });
 
+        // First get the existing entry
+        const existingEntry = await this.getEntry(id);
+
+        // Merge the changes with the existing entry
+        const updatedEntry = {
+            ...existingEntry,
+            ...entry
+        };
+
+        // Make sure all required fields are present
+        if (!updatedEntry.amount || !updatedEntry.currency || !updatedEntry.date ||
+            !updatedEntry.account || !updatedEntry.category || !updatedEntry.modified) {
+            throw new Error('Missing required fields for updating entry');
+        }
+
         const params: Record<string, any> = {};
         if (updateMode) {
             params.update = updateMode;
         }
 
-        const response = await this.client.put<ToshlEntry>(`/entries/${id}`, entry, params);
+        const response = await this.client.put<ToshlEntry>(`/entries/${id}`, updatedEntry, params);
         return response.data;
     }
 
@@ -99,6 +114,48 @@ export class EntriesClient {
         }
 
         await this.client.delete<void>(`/entries/${id}`, params);
+    }
+
+    /**
+     * Manages entries in bulk
+     * @param params Management parameters
+     * @returns void
+     */
+    async manageEntries(params: {
+        with: {
+            tags?: string[];
+            accounts?: string[];
+            categories?: string[];
+            description?: string;
+        };
+        set?: {
+            tags?: string[];
+            account?: string;
+            category?: string;
+        };
+        add?: {
+            tags?: string[];
+        };
+        remove?: {
+            tags?: string[];
+        };
+    }): Promise<void> {
+        logger.debug('Managing entries', { params });
+
+        // Validate required parameters
+        if (!params.with) {
+            throw new Error('Missing required parameter: with');
+        }
+
+        if (!params.with.tags && !params.with.accounts && !params.with.categories && !params.with.description) {
+            throw new Error('At least one with parameter is required (tags, accounts, categories, or description)');
+        }
+
+        if (!params.set && !params.add && !params.remove) {
+            throw new Error('At least one action parameter is required (set, add, or remove)');
+        }
+
+        await this.client.post<void>('/entries/manage', params);
     }
 }
 

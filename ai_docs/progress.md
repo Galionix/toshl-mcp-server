@@ -54,6 +54,7 @@ The following components have been implemented and are ready for testing:
    - Implemented POST, PUT, and DELETE HTTP methods in the ToshlApiClient
    - Added createEntry, updateEntry, and deleteEntry methods to the EntriesClient
    - Created entry_create, entry_update, and entry_delete tools for the MCP server
+   - Implemented entries/manage endpoint for bulk entry management
 
 ## What's Left to Build
 
@@ -71,7 +72,7 @@ The following components have been implemented and are ready for testing:
 2. **Integration Tests**
 
    - [x] Test entries endpoint with real API credentials (read operations)
-   - [ ] Test entries endpoint with real API credentials (write operations)
+   - [x] Test entries endpoint with real API credentials (write operations)
    - [ ] Test other end-to-end flows
    - [ ] Test with mock data
    - [ ] Test remaining endpoints with real API credentials
