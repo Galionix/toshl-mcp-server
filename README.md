@@ -9,6 +9,7 @@ The Toshl MCP Server provides a bridge between AI agents and the Toshl Finance A
 ## Features
 
 - READ access to Toshl Finance API endpoints:
+
   - Accounts
   - Categories
   - Tags
@@ -17,6 +18,7 @@ The Toshl MCP Server provides a bridge between AI agents and the Toshl Finance A
   - Planning
 
 - MCP Resources:
+
   - List accounts
   - Get account details
   - List categories
@@ -84,6 +86,28 @@ Start the server:
 
 ```bash
 npm start
+```
+
+## Configure MCP server
+
+```
+ "toshl-mcp-server": {
+      "command": "node",
+      "args": [
+        "/root/source/personal/toshl-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "TOSHL_API_TOKEN": "your-token",
+        "TOSHL_API_BASE_URL": "https://api.toshl.com",
+        "MCP_SERVER_NAME": "toshl-mcp-server",
+        "MCP_SERVER_VERSION": "0.1.0",
+        "CACHE_TTL": "3600",
+        "CACHE_ENABLED": "true",
+        "LOG_LEVEL": "debug"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
 ```
 
 ## Development
