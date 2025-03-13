@@ -51,11 +51,11 @@ export function setupEntryTools() {
                     },
                     accounts: {
                         type: 'string',
-                        description: 'Comma-separated list of account IDs',
+                        description: 'A comma separated list of account ids. If used only entries from the specified accounts are returned.',
                     },
                     categories: {
                         type: 'string',
-                        description: 'Comma-separated list of category IDs',
+                        description: 'A comma separated list of category ids. If used only entries in the specified categories are returned.',
                     },
                     tags: {
                         type: 'string',
