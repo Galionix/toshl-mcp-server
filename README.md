@@ -1,6 +1,6 @@
 # Toshl MCP Server
 
-An MCP (Model Context Protocol) server for integrating Toshl Finance with AI agents.
+An MCP (Model Context Protocol) server for integrating  [Toshl Finance](https://toshl.com/) with AI agents.
 
 ## Overview
 
