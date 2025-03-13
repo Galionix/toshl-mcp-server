@@ -1,6 +1,6 @@
 # Toshl MCP Server
 
-An MCP (Model Context Protocol) server for integrating  [Toshl Finance](https://toshl.com/) with AI agents.
+An MCP (Model Context Protocol) server for integrating [Toshl Finance](https://toshl.com/) with AI agents.
 
 ## Overview
 
@@ -30,6 +30,7 @@ The Toshl MCP Server provides a bridge between AI agents and the Toshl Finance A
   - Get budget history
   - Get user profile
   - Get account summary
+  - List entries
 
 - MCP Tools:
   - Account tools (list accounts, get account details)
@@ -37,7 +38,7 @@ The Toshl MCP Server provides a bridge between AI agents and the Toshl Finance A
   - Tag tools (list tags, get tag details)
   - Budget tools (list budgets, get budget details, get budget history)
   - User tools (get profile, get summary, get payment types, get payments)
-  - Entry tools (list entries, get entry details, get entry sums, get entry timeline, create entry, update entry, delete entry)
+  - Entry tools (list entries, get entry details, get entry sums, get entry timeline, create entry, update entry, delete entry, manage entries)
   - Analysis tools (analyze spending by category, analyze budget performance, analyze account balances)
 
 ## Prerequisites
@@ -119,6 +120,14 @@ Run the server in development mode:
 npm run dev
 ```
 
+## Documentation
+
+- [API Overview](docs/api/overview.md)
+- [Authentication](docs/api/auth.md)
+- [Accounts](docs/api/accounts.md)
+- [Entries](docs/api/entries.md)
+- [Transfers](docs/api/transfers.md)
+
 ## Project Structure
 
 ```
@@ -135,6 +144,7 @@ toshl-mcp-server/
 │   │       ├── categories.ts    # Categories API client
 │   │       ├── tags.ts          # Tags API client
 │   │       ├── budgets.ts       # Budgets API client
+│   │       ├── entries.ts       # Entries API client
 │   │       ├── me.ts            # User API client
 │   │       └── planning.ts      # Planning API client
 │   ├── resources/               # MCP resource handlers

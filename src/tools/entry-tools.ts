@@ -1,5 +1,6 @@
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 import { createEntriesClient } from '../api/endpoints/entries.js';
+import { ToshlTransaction } from '../utils/types.js';
 import logger from '../utils/logger.js';
 
 /**
@@ -8,6 +9,28 @@ import logger from '../utils/logger.js';
  */
 export function setupEntryTools() {
     return [
+        {
+            name: 'entry_convert_to_transfer',
+            description: 'Convert a regular entry to a transfer between accounts in Toshl Finance',
+            inputSchema: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string',
+                        description: 'ID of the entry to convert',
+                    },
+                    destination_account: {
+                        type: 'string',
+                        description: 'Destination account ID for the transfer',
+                    },
+                    description: {
+                        type: 'string',
+                        description: 'Optional description for the transfer',
+                    },
+                },
+                required: ['id', 'destination_account'],
+            },
+        },
         {
             name: 'entry_list',
             description: 'List entries in Toshl Finance',
@@ -48,7 +71,7 @@ export function setupEntryTools() {
         },
         {
             name: 'entry_manage',
-            description: 'Manage entries in bulk in Toshl Finance',
+            description: 'Manage entries in bulk in Toshl Finance.',
             inputSchema: {
                 type: 'object',
                 properties: {
@@ -222,7 +245,7 @@ export function setupEntryTools() {
         },
         {
             name: 'entry_create',
-            description: 'Create a new entry in Toshl Finance',
+            description: 'Create a new entry in Toshl Finance. To create a transfer between accounts, include a transaction object with the destination account ID and currency.',
             inputSchema: {
                 type: 'object',
                 properties: {
@@ -263,7 +286,7 @@ export function setupEntryTools() {
                     },
                     category: {
                         type: 'string',
-                        description: 'Category ID',
+                        description: 'Category ID (use Transfer category ID for transfers)',
                     },
                     tags: {
                         type: 'array',
@@ -271,6 +294,28 @@ export function setupEntryTools() {
                         items: {
                             type: 'string',
                         },
+                    },
+                    transaction: {
+                        type: 'object',
+                        description: 'Transaction object for transfers between accounts',
+                        properties: {
+                            account: {
+                                type: 'string',
+                                description: 'Destination account ID for the transfer',
+                            },
+                            currency: {
+                                type: 'object',
+                                description: 'Currency object for the destination account',
+                                properties: {
+                                    code: {
+                                        type: 'string',
+                                        description: 'Currency code (e.g., USD, EUR)',
+                                    },
+                                },
+                                required: ['code'],
+                            },
+                        },
+                        required: ['account', 'currency'],
                     },
                 },
                 required: ['amount', 'currency', 'date', 'account', 'category'],
@@ -792,6 +837,77 @@ export async function handleEntryManageTool(args: any) {
 }
 
 /**
+ * Handles the entry_convert_to_transfer tool
+ * @param args Tool arguments
+ * @returns Tool response
+ */
+export async function handleEntryConvertToTransferTool(args: { id: string; destination_account: string; description?: string }) {
+    logger.debug('Handling entry_convert_to_transfer tool', { args });
+
+    // Check required parameters
+    if (!args.id || !args.destination_account) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'Missing required parameters: id and destination_account are required',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    try {
+        const entriesClient = await createEntriesClient();
+
+        // Get the original entry
+        const originalEntry = await entriesClient.getEntry(args.id);
+
+        // Create a new transfer entry
+        const transferEntry = {
+            amount: originalEntry.amount,
+            currency: originalEntry.currency,
+            date: originalEntry.date,
+            desc: args.description || `Transfer to ${args.destination_account}`,
+            account: originalEntry.account,
+            category: '73101634', // Transfer category ID
+            tags: originalEntry.tags,
+            transaction: {
+                account: args.destination_account,
+                currency: originalEntry.currency,
+            } as any,
+        };
+
+        // Create the transfer entry
+        const newEntry = await entriesClient.createEntry(transferEntry);
+
+        // Delete the original entry
+        await entriesClient.deleteEntry(args.id);
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: JSON.stringify(newEntry, null, 2),
+                },
+            ],
+        };
+    } catch (error) {
+        logger.error('Error handling entry_convert_to_transfer tool', { args, error });
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: `Error converting entry to transfer: ${(error as Error).message}`,
+                },
+            ],
+            isError: true,
+        };
+    }
+}
+
+/**
  * Handles entry tools
  * @param toolName Tool name
  * @param args Tool arguments
@@ -799,6 +915,8 @@ export async function handleEntryManageTool(args: any) {
  */
 export async function handleEntryTool(toolName: string, args: any) {
     switch (toolName) {
+        case 'entry_convert_to_transfer':
+            return handleEntryConvertToTransferTool(args as { id: string; destination_account: string; description?: string });
         case 'entry_list':
             return handleEntryListTool(args);
         case 'entry_get':
