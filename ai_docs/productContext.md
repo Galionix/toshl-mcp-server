@@ -28,10 +28,11 @@ The Toshl MCP Server is designed to bridge the gap between AI agents and persona
 ## Key Features
 
 1. **READ Access to Toshl Data**: Access to accounts, categories, tags, budgets, user information, and planning data.
-2. **Authentication Management**: Secure handling of Toshl API authentication.
-3. **Data Formatting**: Consistent presentation of financial data for analysis.
-4. **Caching**: Efficient data retrieval with appropriate caching.
-5. **Error Handling**: Robust error handling and recovery.
+2. **WRITE Access to Entries**: Create, update, and delete financial entries.
+3. **Authentication Management**: Secure handling of Toshl API authentication.
+4. **Data Formatting**: Consistent presentation of financial data for analysis.
+5. **Caching**: Efficient data retrieval with appropriate caching.
+6. **Error Handling**: Robust error handling and recovery.
 
 ## Success Metrics
 
@@ -43,7 +44,7 @@ The Toshl MCP Server is designed to bridge the gap between AI agents and persona
 
 ## Constraints
 
-1. **READ-Only Access**: Currently limited to read-only operations.
+1. **Partial Write Access**: Write operations are currently limited to entries only.
 2. **API Rate Limits**: Subject to Toshl API rate limiting.
 3. **Authentication Requirements**: Requires user authentication with Toshl.
 4. **Data Privacy**: Must adhere to financial data privacy best practices.

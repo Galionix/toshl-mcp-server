@@ -48,6 +48,58 @@ export class EntriesClient {
         const response = await this.client.get<ToshlTimelineItem[]>('/entries/timeline', params);
         return response.data;
     }
+
+    /**
+     * Creates a new entry
+     * @param entry Entry data
+     * @returns Created entry
+     */
+    async createEntry(entry: Partial<ToshlEntry>): Promise<ToshlEntry> {
+        logger.debug('Creating entry', { entry });
+        const response = await this.client.post<ToshlEntry>('/entries', entry);
+        const id = response.headers['location'].split('/').pop();
+        if (!id) {
+            logger.debug('Response', response)
+            throw new Error('Invalid response. Expected location header to contain entry ID');
+        }
+        return await this.getEntry(id);
+    }
+
+    /**
+     * Updates an existing entry
+     * @param id Entry ID
+     * @param entry Entry data
+     * @param updateMode Update mode (all, one, tail)
+     * @returns Updated entry
+     */
+    async updateEntry(id: string, entry: Partial<ToshlEntry>, updateMode?: 'all' | 'one' | 'tail'): Promise<ToshlEntry> {
+        logger.debug('Updating entry', { id, entry, updateMode });
+
+        const params: Record<string, any> = {};
+        if (updateMode) {
+            params.update = updateMode;
+        }
+
+        const response = await this.client.put<ToshlEntry>(`/entries/${id}`, entry, params);
+        return response.data;
+    }
+
+    /**
+     * Deletes an entry
+     * @param id Entry ID
+     * @param deleteMode Delete mode (all, one, tail)
+     * @returns void
+     */
+    async deleteEntry(id: string, deleteMode?: 'all' | 'one' | 'tail'): Promise<void> {
+        logger.debug('Deleting entry', { id, deleteMode });
+
+        const params: Record<string, any> = {};
+        if (deleteMode) {
+            params.delete = deleteMode;
+        }
+
+        await this.client.delete<void>(`/entries/${id}`, params);
+    }
 }
 
 /**

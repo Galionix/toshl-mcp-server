@@ -115,7 +115,89 @@ export class ToshlApiClient {
                 headers: response.headers as Record<string, string>
             };
         } catch (error) {
-            return handleApiError(error);
+            handleApiError(error);
+            // This line will never be reached due to handleApiError throwing an error
+            throw error;
+        }
+    }
+
+    /**
+     * Makes a POST request to the Toshl API
+     * @param path API path
+     * @param data Request body
+     * @param params Query parameters
+     * @param config Additional Axios config
+     * @returns API response
+     */
+    async post<T>(path: string, data: any, params?: Record<string, any>, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+        try {
+            const response: AxiosResponse = await this.client.post(path, data, {
+                ...config,
+                params
+            });
+
+            return {
+                data: response.data,
+                status: response.status,
+                headers: response.headers as Record<string, string>
+            };
+        } catch (error) {
+            handleApiError(error);
+            // This line will never be reached due to handleApiError throwing an error
+            throw error;
+        }
+    }
+
+    /**
+     * Makes a PUT request to the Toshl API
+     * @param path API path
+     * @param data Request body
+     * @param params Query parameters
+     * @param config Additional Axios config
+     * @returns API response
+     */
+    async put<T>(path: string, data: any, params?: Record<string, any>, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+        try {
+            const response: AxiosResponse = await this.client.put(path, data, {
+                ...config,
+                params
+            });
+
+            return {
+                data: response.data,
+                status: response.status,
+                headers: response.headers as Record<string, string>
+            };
+        } catch (error) {
+            handleApiError(error);
+            // This line will never be reached due to handleApiError throwing an error
+            throw error;
+        }
+    }
+
+    /**
+     * Makes a DELETE request to the Toshl API
+     * @param path API path
+     * @param params Query parameters
+     * @param config Additional Axios config
+     * @returns API response
+     */
+    async delete<T>(path: string, params?: Record<string, any>, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+        try {
+            const response: AxiosResponse = await this.client.delete(path, {
+                ...config,
+                params
+            });
+
+            return {
+                data: response.data,
+                status: response.status,
+                headers: response.headers as Record<string, string>
+            };
+        } catch (error) {
+            handleApiError(error);
+            // This line will never be reached due to handleApiError throwing an error
+            throw error;
         }
     }
 

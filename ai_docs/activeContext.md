@@ -19,6 +19,14 @@ We have made significant progress on the project:
 9. Created and fixed tests for the /entries endpoint to verify its functionality with the Toshl API
    - Fixed parameter handling in the EntriesClient class
    - Added required currency parameter for the getEntrySums endpoint
+10. Added write functionality to the /entries endpoint
+    - Implemented POST, PUT, and DELETE methods in the ToshlApiClient class
+    - Added createEntry, updateEntry, and deleteEntry methods to the EntriesClient class
+    - Added entry_create, entry_update, and entry_delete tools to the MCP server
+11. Fixed issue with updateEntry method in the EntriesClient class
+    - Modified updateEntry to fetch the existing entry first
+    - Merged the changes with the existing entry data
+    - Ensured all required fields are present before sending the update to the API
 
 ## Next Steps
 

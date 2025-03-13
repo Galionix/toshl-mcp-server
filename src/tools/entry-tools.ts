@@ -132,6 +132,146 @@ export function setupEntryTools() {
                 required: ['from', 'to'],
             },
         },
+        {
+            name: 'entry_create',
+            description: 'Create a new entry in Toshl Finance',
+            inputSchema: {
+                type: 'object',
+                properties: {
+                    amount: {
+                        type: 'number',
+                        description: 'Entry amount (negative for expense, positive for income)',
+                    },
+                    currency: {
+                        type: 'object',
+                        description: 'Currency object',
+                        properties: {
+                            code: {
+                                type: 'string',
+                                description: 'Currency code (e.g., USD, EUR)',
+                            },
+                            rate: {
+                                type: 'number',
+                                description: 'Exchange rate',
+                            },
+                            fixed: {
+                                type: 'boolean',
+                                description: 'Whether the exchange rate is fixed',
+                            },
+                        },
+                        required: ['code'],
+                    },
+                    date: {
+                        type: 'string',
+                        description: 'Entry date (YYYY-MM-DD)',
+                    },
+                    desc: {
+                        type: 'string',
+                        description: 'Entry description',
+                    },
+                    account: {
+                        type: 'string',
+                        description: 'Account ID',
+                    },
+                    category: {
+                        type: 'string',
+                        description: 'Category ID',
+                    },
+                    tags: {
+                        type: 'array',
+                        description: 'Array of tag IDs',
+                        items: {
+                            type: 'string',
+                        },
+                    },
+                },
+                required: ['amount', 'currency', 'date', 'account', 'category'],
+            },
+        },
+        {
+            name: 'entry_update',
+            description: 'Update an existing entry in Toshl Finance',
+            inputSchema: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string',
+                        description: 'Entry ID',
+                    },
+                    amount: {
+                        type: 'number',
+                        description: 'Entry amount (negative for expense, positive for income)',
+                    },
+                    currency: {
+                        type: 'object',
+                        description: 'Currency object',
+                        properties: {
+                            code: {
+                                type: 'string',
+                                description: 'Currency code (e.g., USD, EUR)',
+                            },
+                            rate: {
+                                type: 'number',
+                                description: 'Exchange rate',
+                            },
+                            fixed: {
+                                type: 'boolean',
+                                description: 'Whether the exchange rate is fixed',
+                            },
+                        },
+                        required: ['code'],
+                    },
+                    date: {
+                        type: 'string',
+                        description: 'Entry date (YYYY-MM-DD)',
+                    },
+                    desc: {
+                        type: 'string',
+                        description: 'Entry description',
+                    },
+                    account: {
+                        type: 'string',
+                        description: 'Account ID',
+                    },
+                    category: {
+                        type: 'string',
+                        description: 'Category ID',
+                    },
+                    tags: {
+                        type: 'array',
+                        description: 'Array of tag IDs',
+                        items: {
+                            type: 'string',
+                        },
+                    },
+                    updateMode: {
+                        type: 'string',
+                        description: 'Update mode for repeating entries (all, one, tail)',
+                        enum: ['all', 'one', 'tail'],
+                    },
+                },
+                required: ['id'],
+            },
+        },
+        {
+            name: 'entry_delete',
+            description: 'Delete an entry in Toshl Finance',
+            inputSchema: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string',
+                        description: 'Entry ID',
+                    },
+                    deleteMode: {
+                        type: 'string',
+                        description: 'Delete mode for repeating entries (all, one, tail)',
+                        enum: ['all', 'one', 'tail'],
+                    },
+                },
+                required: ['id'],
+            },
+        },
     ];
 }
 
@@ -324,6 +464,170 @@ export async function handleEntryTimelineTool(args: any) {
 }
 
 /**
+ * Handles the entry_create tool
+ * @param args Tool arguments
+ * @returns Tool response
+ */
+export async function handleEntryCreateTool(args: any) {
+    logger.debug('Handling entry_create tool', { args });
+
+    // Check required parameters
+    if (!args.amount || !args.currency || !args.date || !args.account || !args.category) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'Missing required parameters: amount, currency, date, account, and category are required',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    // Check currency code
+    if (!args.currency.code) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'Missing required parameter: currency.code',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    try {
+        const entriesClient = await createEntriesClient();
+        const entry = await entriesClient.createEntry(args);
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: JSON.stringify(entry, null, 2),
+                },
+            ],
+        };
+    } catch (error) {
+        logger.error('Error handling entry_create tool', { args, error });
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: `Error creating entry: ${(error as Error).message}`,
+                },
+            ],
+            isError: true,
+        };
+    }
+}
+
+/**
+ * Handles the entry_update tool
+ * @param args Tool arguments
+ * @returns Tool response
+ */
+export async function handleEntryUpdateTool(args: any) {
+    logger.debug('Handling entry_update tool', { args });
+
+    // Check required parameters
+    if (!args.id) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'Missing required parameter: id',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    try {
+        const entriesClient = await createEntriesClient();
+
+        // Extract id and updateMode from args
+        const { id, updateMode, ...entryData } = args;
+
+        // Update the entry
+        const entry = await entriesClient.updateEntry(id, entryData, updateMode);
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: JSON.stringify(entry, null, 2),
+                },
+            ],
+        };
+    } catch (error) {
+        logger.error('Error handling entry_update tool', { args, error });
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: `Error updating entry: ${(error as Error).message}`,
+                },
+            ],
+            isError: true,
+        };
+    }
+}
+
+/**
+ * Handles the entry_delete tool
+ * @param args Tool arguments
+ * @returns Tool response
+ */
+export async function handleEntryDeleteTool(args: any) {
+    logger.debug('Handling entry_delete tool', { args });
+
+    // Check required parameters
+    if (!args.id) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'Missing required parameter: id',
+                },
+            ],
+            isError: true,
+        };
+    }
+
+    try {
+        const entriesClient = await createEntriesClient();
+
+        // Delete the entry
+        await entriesClient.deleteEntry(args.id, args.deleteMode);
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: `Entry ${args.id} deleted successfully`,
+                },
+            ],
+        };
+    } catch (error) {
+        logger.error('Error handling entry_delete tool', { args, error });
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: `Error deleting entry: ${(error as Error).message}`,
+                },
+            ],
+            isError: true,
+        };
+    }
+}
+
+/**
  * Handles entry tools
  * @param toolName Tool name
  * @param args Tool arguments
@@ -339,6 +643,12 @@ export async function handleEntryTool(toolName: string, args: any) {
             return handleEntrySumsTool(args);
         case 'entry_timeline':
             return handleEntryTimelineTool(args);
+        case 'entry_create':
+            return handleEntryCreateTool(args);
+        case 'entry_update':
+            return handleEntryUpdateTool(args);
+        case 'entry_delete':
+            return handleEntryDeleteTool(args);
         default:
             throw new McpError(
                 ErrorCode.MethodNotFound,

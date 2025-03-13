@@ -19,11 +19,13 @@ We have completed the initial implementation of the Toshl MCP Server project. Th
 - [x] Caching system implementation
 - [x] Error handling implementation
 - [x] Documentation
-- [x] Entries endpoint implementation
+- [x] Entries endpoint implementation (READ operations)
+- [x] Entries endpoint implementation (WRITE operations)
 
 ### In Progress
 
-- [x] Testing for entries endpoint (completed and fixed)
+- [x] Testing for entries endpoint (read operations)
+- [x] Testing for entries endpoint (write operations)
 - [ ] Testing with real API credentials for other endpoints
 - [ ] Performance optimization
 - [ ] Documentation enhancement
@@ -48,6 +50,10 @@ The following components have been implemented and are ready for testing:
 8. **Tests**: Tests for the entries endpoint have been implemented and fixed, covering listEntries, getEntry, getEntrySums, and getEntryTimeline functionality.
    - Fixed parameter handling in the EntriesClient class to correctly pass parameters to the API
    - Added required currency parameter for the getEntrySums endpoint
+9. **Write Operations**: Added support for write operations to the entries endpoint.
+   - Implemented POST, PUT, and DELETE HTTP methods in the ToshlApiClient
+   - Added createEntry, updateEntry, and deleteEntry methods to the EntriesClient
+   - Created entry_create, entry_update, and entry_delete tools for the MCP server
 
 ## What's Left to Build
 
@@ -55,15 +61,17 @@ The following components have been implemented and are ready for testing:
 
 1. **Unit Tests**
 
-   - [x] Write tests for entries API client
+   - [x] Write tests for entries API client (read operations)
    - [x] Fix parameter handling in API clients
+   - [x] Write tests for entries API client (write operations)
    - [ ] Write tests for other API clients
    - [ ] Write tests for resource handlers
    - [ ] Write tests for tool handlers
 
 2. **Integration Tests**
 
-   - [x] Test entries endpoint with real API credentials
+   - [x] Test entries endpoint with real API credentials (read operations)
+   - [ ] Test entries endpoint with real API credentials (write operations)
    - [ ] Test other end-to-end flows
    - [ ] Test with mock data
    - [ ] Test remaining endpoints with real API credentials

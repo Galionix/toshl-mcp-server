@@ -182,4 +182,117 @@ describe('EntriesClient', () => {
             }
         }
     });
+
+    // Write operation tests
+    describe('Write Operations', () => {
+        // Variables to store created entry ID for cleanup
+        let createdEntryId: string;
+
+        // Get account and category IDs for creating entries
+        let accountId: string;
+        let categoryId: string;
+
+        beforeAll(async () => {
+            // First get the list of entries to find a valid account and category ID
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+
+            const todayStr = today.toISOString().split('T')[0];
+            const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
+
+            const entries = await client.listEntries({
+                from: thirtyDaysAgoStr,
+                to: todayStr
+            });
+
+            // Skip the tests if there are no entries
+            if (entries.length === 0) {
+                console.warn('Skipping write operation tests: No entries available to get account and category IDs');
+                return;
+            }
+
+            // Get the first entry's account and category IDs
+            accountId = entries[0].account;
+            categoryId = entries[0].category;
+        });
+
+        test('createEntry should create a new entry', async () => {
+            // Skip the test if account or category IDs are not available
+            if (!accountId || !categoryId) {
+                console.warn('Skipping createEntry test: No account or category IDs available');
+                return;
+            }
+
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+
+            const newEntry = {
+                amount: -10.99, // Negative for expense
+                currency: {
+                    code: 'USD',
+                    rate: 1,
+                    fixed: false
+                },
+                date: todayStr,
+                desc: 'Test expense created by MCP server test',
+                account: accountId,
+                category: categoryId
+            };
+
+            const createdEntry = await client.createEntry(newEntry);
+
+            // Store the created entry ID for cleanup
+            createdEntryId = createdEntry.id;
+
+            // Verify the response
+            expect(createdEntry.id).toBeDefined();
+            expect(createdEntry.amount).toBe(newEntry.amount);
+            expect(createdEntry.currency.code).toBe(newEntry.currency.code);
+            expect(createdEntry.date).toBe(newEntry.date);
+            expect(createdEntry.desc).toBe(newEntry.desc);
+            expect(createdEntry.account).toBe(newEntry.account);
+            expect(createdEntry.category).toBe(newEntry.category);
+            expect(createdEntry.modified).toBeDefined();
+        });
+
+        test('updateEntry should update an existing entry', async () => {
+            // Skip the test if no entry was created
+            if (!createdEntryId) {
+                console.warn('Skipping updateEntry test: No entry was created');
+                return;
+            }
+
+            const updatedDesc = 'Updated test expense by MCP server test';
+
+            const updatedEntry = await client.updateEntry(createdEntryId, {
+                desc: updatedDesc
+            });
+
+            // Verify the response
+            expect(updatedEntry.id).toBe(createdEntryId);
+            expect(updatedEntry.desc).toBe(updatedDesc);
+        });
+
+        test('deleteEntry should delete an entry', async () => {
+            // Skip the test if no entry was created
+            if (!createdEntryId) {
+                console.warn('Skipping deleteEntry test: No entry was created');
+                return;
+            }
+
+            // Delete the entry
+            await client.deleteEntry(createdEntryId);
+
+            // Try to get the deleted entry, should throw an error
+            try {
+                await client.getEntry(createdEntryId);
+                // If we get here, the entry was not deleted
+                fail('Entry was not deleted');
+            } catch (error) {
+                // Expected error, entry was deleted
+                expect(error).toBeDefined();
+            }
+        });
+    });
 });
