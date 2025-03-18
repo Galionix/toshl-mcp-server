@@ -47,6 +47,11 @@ The Toshl MCP Server provides a bridge between AI agents and the Toshl Finance A
 - npm (v8.x or higher)
 - Toshl Finance API token
 
+## Get API Token
+
+1. go to https://developer.toshl.com/apps/
+2. create new personal token. Insert name for token under "Description" and your account password under "Password"
+
 ## Installation
 
 1. Clone the repository:
