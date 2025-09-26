@@ -1,17 +1,17 @@
 {
-  "name": "@tasks/mcp-servers",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/mcp-servers/src",
+  "name": "@tasks/mcp-toshl",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mcp-servers/toshl/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/mcp-servers",
-        "main": "apps/mcp-servers/src/index.ts",
-        "tsConfig": "apps/mcp-servers/tsconfig.app.json",
-        "assets": ["apps/mcp-servers/src/assets"]
+        "outputPath": "dist/apps/mcp-servers/toshl",
+        "main": "apps/mcp-servers/toshl/src/index.ts",
+        "tsConfig": "apps/mcp-servers/toshl/tsconfig.app.json",
+        "assets": ["apps/mcp-servers/toshl/src/assets"]
       }
     },
     "serve": {
@@ -19,24 +19,24 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "@tasks/mcp-servers:build",
+        "buildTarget": "@tasks/mcp-toshl:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "@tasks/mcp-servers:build:development"
+          "buildTarget": "@tasks/mcp-toshl:build:development"
         },
         "production": {
-          "buildTarget": "@tasks/mcp-servers:build:production"
+          "buildTarget": "@tasks/mcp-toshl:build:production"
         }
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx apps/mcp-servers/src/index.ts"
+        "command": "tsx apps/mcp-servers/toshl/src/index.ts"
       }
     }
   },
-  "tags": ["type:application", "scope:mcp"]
+  "tags": ["type:application", "scope:mcp", "service:toshl"]
 }
