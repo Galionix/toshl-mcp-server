@@ -1,10 +1,18 @@
-# Toshl MCP Server
+# MCP Servers
 
-An MCP (Model Context Protocol) server for integrating [Toshl Finance](https://toshl.com/) with AI agents.
+This Nx project contains MCP (Model Context Protocol) servers integrated with the TaskQueue system.
 
 ## Overview
 
-The Toshl MCP Server provides a bridge between AI agents and the Toshl Finance API. It allows AI agents to access financial data from Toshl, analyze it, and provide insights and advice based on the data.
+MCP servers provide bridges between the TaskQueue system and external APIs. They allow the TaskQueue to access external data sources, analyze information, and provide insights through the task processing pipeline.
+
+## Included Servers
+
+### Toshl MCP Server
+
+An MCP server for integrating [Toshl Finance](https://toshl.com/) with the TaskQueue system.
+
+The Toshl MCP Server provides access to financial data from Toshl Finance API, enabling automated financial analysis and reporting through scheduled tasks.
 
 ## Features
 
@@ -52,77 +60,88 @@ The Toshl MCP Server provides a bridge between AI agents and the Toshl Finance A
 1. go to https://developer.toshl.com/apps/
 2. create new personal token. Insert name for token under "Description" and your account password under "Password"
 
-## Installation
+## Setup
 
-1. Clone the repository:
+### 1. Install Dependencies
 
-```bash
-git clone https://github.com/yourusername/toshl-mcp-server.git
-cd toshl-mcp-server
-```
-
-2. Install dependencies:
+From the workspace root:
 
 ```bash
 npm install
 ```
 
-3. Create a `.env` file based on the `.env.example` file:
+### 2. Configure Environment
+
+Create `.env` file in the workspace root with your Toshl API token:
 
 ```bash
-cp .env.example .env
+TOSHL_API_TOKEN=your_personal_access_token_here
 ```
 
-4. Edit the `.env` file and add your Toshl API token:
+### 3. TaskQueue Integration
 
+The MCP server is integrated with the TaskQueue system through the `toshl-mcp.processor.ts`. You can create tasks with the `toshl_mcp_finance` execution type to interact with Toshl Finance API.
+
+Example task payload:
+```json
+{
+  "operation": "expenses-summary",
+  "params": {
+    "from": "2024-01-01",
+    "to": "2024-01-31"
+  }
+}
 ```
-TOSHL_API_TOKEN=your_api_token
+
+## Available Operations
+
+### 1. Expenses Summary
+Get summary of expenses for a date range:
+```json
+{
+  "operation": "expenses-summary",
+  "params": {
+    "from": "2024-01-01",
+    "to": "2024-01-31"
+  }
+}
 ```
 
-## Building
+### 2. Recent Transactions
+Get recent transactions:
+```json
+{
+  "operation": "recent-transactions",
+  "params": {
+    "limit": 10
+  }
+}
+```
 
-Build the project:
+### 3. Budget Status
+Get current budget status:
+```json
+{
+  "operation": "budget-status",
+  "params": {}
+}
+```
 
+## Building and Running
+
+### Build the MCP server:
 ```bash
-npm run build
+nx build mcp-servers
 ```
 
-## Running
-
-Start the server:
-
+### Run in development mode:
 ```bash
-npm start
+nx serve mcp-servers
 ```
 
-## Configure MCP server
-
-```
- "toshl-mcp-server": {
-      "command": "node",
-      "args": [
-        "/root/source/personal/toshl-mcp-server/dist/index.js"
-      ],
-      "env": {
-        "TOSHL_API_TOKEN": "your-token",
-        "TOSHL_API_BASE_URL": "https://api.toshl.com",
-        "MCP_SERVER_NAME": "toshl-mcp-server",
-        "MCP_SERVER_VERSION": "0.1.0",
-        "CACHE_TTL": "3600",
-        "CACHE_ENABLED": "true",
-        "LOG_LEVEL": "debug"
-      },
-      "disabled": false,
-      "autoApprove": []
-    }
-```
-
-## Development
-
-Run the server in development mode:
-
+### Run TaskQueue with MCP integration:
 ```bash
-npm run dev
+nx serve taskqueue
 ```
 
 ## Documentation
@@ -177,6 +196,36 @@ toshl-mcp-server/
 ├── tsconfig.json                # TypeScript configuration
 └── README.md                    # Project documentation
 ```
+
+## Usage via TaskQueue UI
+
+1. **Open TaskQueue Interface**: Navigate to http://localhost:3000
+2. **Create New Task**: Click "Add Task" button
+3. **Configure Task**:
+   - **Execution Type**: Select `toshl_mcp_finance`
+   - **Payload**: Enter JSON with operation and parameters
+   - **Queue**: Choose appropriate queue
+   - **Priority**: Set task priority
+
+4. **Example Task Creation**:
+   ```json
+   {
+     "operation": "expenses-summary",
+     "params": {
+       "from": "2024-01-01",
+       "to": "2024-01-31"
+     }
+   }
+   ```
+
+5. **Monitor Results**: Check task results in the TaskQueue interface
+
+## Integration with Other Systems
+
+The MCP server can be integrated with:
+- **Telegram Bot**: For financial notifications and reports
+- **Scheduled Tasks**: For automatic weekly/daily financial summaries
+- **Pushover**: For push notifications about budget alerts
 
 ## Configuration
 
